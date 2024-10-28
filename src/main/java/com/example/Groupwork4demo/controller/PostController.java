@@ -1,9 +1,9 @@
 package com.example.Groupwork4demo.controller;
 
 import com.example.Groupwork4demo.dto.PostDto;
-import com.example.Groupwork4demo.model.User;
+import com.example.Groupwork4demo.security.JwtUtils;
 import com.example.Groupwork4demo.service.PostService;
-import com.example.Groupwork4demo.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,46 +16,46 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-
+    @Autowired
+    private JwtUtils jwtUtils;
 
 
     @PostMapping
-        public void createPost(@RequestParam String userName,@RequestBody PostDto dto){
-
-        postService.createPost(dto,userName);
+        public void createPost( @RequestBody PostDto dto, HttpServletRequest request){
+        postService.createPost(dto,jwtUtils.getUserNameFromRequest(request));
 
     }
 
     @DeleteMapping
-    public void deletePost(@RequestParam String userName,@RequestParam long id){
-        postService.deletePost(id, userName);
+    public void deletePost(@RequestParam long id, HttpServletRequest request){
+        postService.deletePost(id,  jwtUtils.getUserNameFromRequest(request));
 
     }
 
     @PutMapping
-    public void updatePost(@RequestParam String userName,
-                           @RequestBody PostDto dto){
+    public void updatePost(
+                           @RequestBody PostDto dto, HttpServletRequest request){
 
-        postService.updatePost(dto, userName);
+        postService.updatePost(dto,  jwtUtils.getUserNameFromRequest(request));
     }
 
     @GetMapping
-    public  PostDto getPostByID(@RequestParam String userName,@RequestParam Long id){
-        return postService.getById(id, userName);
+    public  PostDto getPostByID(@RequestParam Long id, HttpServletRequest request){
+        return postService.getById(id, jwtUtils.getUserNameFromRequest(request));
     }
 
     @GetMapping("getUserPosts")
-    public List<PostDto> getUserPosts(@RequestParam String userName,
+    public List<PostDto> getUserPosts(
                                       @RequestParam Long pageNumber,
-                                      @RequestParam Long pageSize){
-        return postService.getUserAllPost(pageNumber,pageSize,userName);
+                                      @RequestParam Long pageSize, HttpServletRequest request){
+        return postService.getUserAllPost(pageNumber,pageSize, jwtUtils.getUserNameFromRequest(request));
     }
 
     @GetMapping("getAllPosts")
-    public List<PostDto> getAllPosts(@RequestParam String userName,
+    public List<PostDto> getAllPosts(
                                       @RequestParam Long pageNumber,
-                                      @RequestParam Long pageSize){
-        return postService.getAllPost(pageNumber,pageSize, userName);
+                                      @RequestParam Long pageSize, HttpServletRequest request){
+        return postService.getAllPost(pageNumber,pageSize, jwtUtils.getUserNameFromRequest(request));
     }
 
 }

@@ -1,9 +1,9 @@
 package com.example.Groupwork4demo.controller;
 
 import com.example.Groupwork4demo.dto.CommentDto;
-import com.example.Groupwork4demo.model.User;
+import com.example.Groupwork4demo.security.JwtUtils;
 import com.example.Groupwork4demo.service.CommentService;
-import com.example.Groupwork4demo.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,30 +15,33 @@ public class CommentController {
     @Autowired
      private CommentService commentService;
 
+    @Autowired
+    private JwtUtils jwtUtils;
+
     @PostMapping
-    public void createComment(@RequestParam String userName,@RequestBody CommentDto dto){
-        commentService.createComment(dto,userName);
+    public void createComment(@RequestBody CommentDto dto, HttpServletRequest request){
+        commentService.createComment(dto,jwtUtils.getUserNameFromRequest(request));
 
     }
 
     @DeleteMapping
-    public void deleteComment(@RequestParam String userName,@RequestParam Long id){
+    public void deleteComment(@RequestParam Long id, HttpServletRequest request){
 
-        commentService.deleteComment(id, userName);
+        commentService.deleteComment(id, jwtUtils.getUserNameFromRequest(request));
     }
 
 
     @PutMapping
-    public void updateComment(@RequestParam String userName,@RequestBody CommentDto dto){
+    public void updateComment(@RequestBody CommentDto dto, HttpServletRequest request){
 
-        commentService.updateComment(dto, userName);
+        commentService.updateComment(dto, jwtUtils.getUserNameFromRequest(request));
 
     }
 
     @GetMapping
-    public List<CommentDto> getComment(@RequestParam String userName){
+    public List<CommentDto> getComment( HttpServletRequest request){
 
-        return commentService.getComment(userName);
+        return commentService.getComment(jwtUtils.getUserNameFromRequest(request));
     }
 
 }
